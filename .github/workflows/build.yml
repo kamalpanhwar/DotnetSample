@@ -19,6 +19,12 @@ jobs:
       - name: Test
         run: dotnet test --no-build --verbosity normal
 
+      - name: Generate SBOM
+        run: |
+          curl -Lo $RUNNER_TEMP/sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
+          chmod +x $RUNNER_TEMP/sbom-tool
+          $RUNNER_TEMP/sbom-tool generate -b ./buildOutput -bc . -pn Test -pv 1.0.0 -ps mycompany -nsb https://sbom.mycompany.com -V Verbose
+  
   report:
     if: ${{ always() }}
     needs: build
